@@ -10,18 +10,18 @@ if (!isset($_SESSION['admin_login'])) {
 else {
 	if (isset($_REQUEST['epid'])) {
 	
-		$epid = $con->quote($_REQUEST['epid']);
+		$epid = $_REQUEST['epid'];
 	}else {
 		header('location: index.php');
 	}
 	$user = $_SESSION['admin_login'];
-	$result = $con->query("SELECT * FROM admin WHERE id='$user'");
+	$result = $con->query("select * from admin WHERE id=".$user);
 	$get_user_email = $result->fetch(PDO::FETCH_ASSOC);
 		$uname_db = $get_user_email['firstName'];
 		$utype_db=$get_user_email['type'];
 
 }
-$getposts = $con->query("SELECT * FROM products WHERE id ='$epid'");
+$getposts = $con->query("select * from products WHERE id =".$epid);
 	if ($getposts->rowCount()) {
 		$row = $getposts->fetch(PDO::FETCH_ASSOC);
 		$id = $row['id'];
@@ -114,12 +114,12 @@ if (((@$_FILES['profilepic']['type']=='image/jpeg') || (@$_FILES['profilepic']['
 
 if (isset($_POST['delprod'])) {
 //triming name
-	$getposts1 = $con->query("SELECT pid FROM orders WHERE pid='$epid'");
+	$getposts1 = $con->query("select pid from orders WHERE pid=".$epid);
 					if ($ttl = $getposts1->rowCount()) {
 						$error_message = "You can not delete this product.<br>Someone ordered this.";
 					}
 					else {
-						if($con->query("DELETE FROM products WHERE id='$epid'")){
+						if($con->query("delete from products WHERE id=".$epid)){
 						header('location: orders.php');
 						}
 					}

@@ -8,7 +8,7 @@ if (!isset($_SESSION['user_login'])) {
 }
 else {
 	$user = $_SESSION['user_login'];
-	$result = $con->query("SELECT * FROM user WHERE id='$user'");
+	$result = $con->query("select * from user WHERE id=".$user);
 		$get_user_email = $result->fetch(PDO::FETCH_ASSOC);
 			$uname_db = $get_user_email['firstName'];
 			$uemail_db = $get_user_email['email'];
@@ -19,36 +19,36 @@ else {
 
 
 if (isset($_REQUEST['cid'])) {
-		$cid = $con->quote($_REQUEST['cid']);
-		if($con->query("DELETE FROM cart WHERE pid='$cid' AND uid='$user'")){
+		$cid = $_REQUEST['cid'];
+		if($con->query("delete from cart WHERE pid=".$cid." and uid=".$user)){
 		header('location: mycart.php?uid='.$user.'');
 	}else{
 		header('location: index.php');
 	}
 }
 if (isset($_REQUEST['aid'])) {
-		$aid = $con->quote($_REQUEST['aid']);
-		$result = $con->query("SELECT * FROM cart WHERE pid='$aid'");
+		$aid = $_REQUEST['aid'];
+		$result = $con->query("select * from cart WHERE pid=".$aid);
 		$get_p = $result->fetch(PDO::FETCH_ASSOC);
 		$num = $get_p['quantity'];
 		$num += 1;
 
-		if($con->query("UPDATE cart SET quantity='$num' WHERE pid='$aid' AND uid='$user'")){
+		if($con->query("update cart set quantity=".$num." WHERE pid=".$aid." and uid=".$user)){
 		header('location: mycart.php?uid='.$user.'');
 	}else{
 		header('location: index.php');
 	}
 }
 if (isset($_REQUEST['sid'])) {
-		$sid = $con->quote($_REQUEST['sid']);
-		$result = $con->query( "SELECT * FROM cart WHERE pid='$sid'");
+		$sid = $_REQUEST['sid'];
+		$result = $con->query("select * from cart WHERE pid=".$sid);
 		$get_p = $result->fetch(PDO::FETCH_ASSOC);
 		$num = $get_p['quantity'];
 		$num -= 1;
 		if ($num <= 0){
 			$num = 1;
 		}
-		if($con->query("UPDATE cart SET quantity='$num' WHERE pid='$sid' AND uid='$user'")){
+		if($con->query("update cart set quantity=".$num." WHERE pid=".$sid." and uid=".$user)){
 		header('location: mycart.php?uid='.$user.'');
 	}else{
 		header('location: index.php');

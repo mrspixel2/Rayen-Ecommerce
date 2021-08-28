@@ -1,4 +1,5 @@
 <?php include ( "../inc/conn.php" ); ?>
+<?php include ( "../inc/connect.inc.php" ); ?>
 <?php 
 ob_start();
 session_start();
@@ -16,6 +17,11 @@ else {
 
 
 }
+
+function throw_ex($er){  
+	throw new Exception($er);  
+  } 
+
 $pname = "";
 $price = "";
 $piece="";
@@ -32,12 +38,11 @@ $pname = $_POST['pname'];
 $price = $_POST['price'];
 $piece=$_POST['piece'];
 $available = $_POST['available'];
-$type = $_POST['type'];
 $item = $_POST['item'];
 $pCode = $_POST['code'];
 $descri = $_POST['descri'];
 //triming name
-$_POST['pname'] = trim($_POST['pname']);
+$_POST['pname'] = $_POST['pname'];
 
 //finding file extention
 $profile_pic_name = @$_FILES['profilepic']['name'];
@@ -61,12 +66,22 @@ if (((@$_FILES['profilepic']['type']=='image/jpeg') || (@$_FILES['profilepic']['
 	}else {
 		if(move_uploaded_file(@$_FILES["profilepic"]["tmp_name"], "../image/product/$item/".$filename)){
 			$photos = $filename;
-			$result = mysqli_query($conn, "INSERT INTO products(pName,price,piece,description,available,category,type,item,pCode,picture) VALUES ('$_POST[pname]','$_POST[price]','$_POST[piece]','$_POST[descri]','$_POST[available]','$_POST[category]','$_POST[type]','$_POST[item]','$_POST[code]','$photos')");
-				header("Location: allproducts.php");
+			try{
+				$result = mysqli_query($conn, "INSERT INTO products(pName,price,piece,description,available,category,type,item,pCode,picture) VALUES ('$_POST[pname]','$_POST[price]','$_POST[piece]','$_POST[descri]','$_POST[available]','$category','$type','$_POST[item]','$_POST[code]','$photos')") or throw_ex(mysqli_error($conn));;
+			}catch(exception $e) {
+				echo "ex: ".$e; 
+			  }							
 		}else {
 			echo "Something Worng on upload!!!";
 		}
-		//echo "Uploaded and stored in: userdata/profile_pics/$item/".@$_FILES["profilepic"]["name"];
+		echo "Uploaded and stored in: userdata/profile_pics/$item/".@$_FILES["profilepic"]["name"];
+		if($result){
+			echo "<script>alert('Uploaded')</script>";
+			header("Location: allproducts.php");
+		}
+		else
+			echo "<script>alert('Upload failed ')</script>";
+		
 		
 		
 	}
@@ -76,6 +91,8 @@ if (((@$_FILES['profilepic']['type']=='image/jpeg') || (@$_FILES['profilepic']['
 	}
 }
 $search_value = "";
+
+ 
 
 ?>
 

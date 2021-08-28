@@ -81,7 +81,7 @@ $del = $_POST['Delivery'];
 						$msg = "
 						Your Order suc
 						";
-						if(mysqli_query($conn,"INSERT INTO orders (uid,pid,quantity,oplace,mobile,odate,delivery) VALUES ('$user','$poid',$quan,'$_POST[address]','$_POST[mobile]','$d','$del')")){
+						if(mysqli_query($conn,"INSERT INTO orders (uid,pid,quantity,oplace,mobile,odate,ddate,delivery) VALUES ('$user','$poid',$quan,'$_POST[address]','$_POST[mobile]','$d','$dd','$del')")){
 
 							//success message
 							

@@ -1,4 +1,4 @@
-<?php include ( "inc/con.php" ); ?>
+<?php include ( "inc/connect.inc.php" ); ?>
 <?php 
 
 ob_start();
@@ -8,8 +8,8 @@ if (!isset($_SESSION['user_login'])) {
 }
 else {
 	$user = $_SESSION['user_login'];
-	$result = mysqli_query($conn,"SELECT * FROM user WHERE id='$user'");
-		$get_user_email = mysqli_fetch_assoc($result);
+	$result = $con->query("select * from user WHERE id=".$user);
+		$get_user_email = $result->fetch(PDO::FETCH_ASSOC);
 			$uname_db = $get_user_email['firstName'];
 			$uemail_db = $get_user_email['email'];
 			$ulast_db=$get_user_email['lastName'];
@@ -20,7 +20,7 @@ else {
 
 if (isset($_REQUEST['uid'])) {
 	
-	$user2 = mysqli_real_escape_string($conn,$_REQUEST['uid']);
+	$user2 = $_REQUEST['uid'];
 	if($user != $user2){
 		header('location: index.php');
 	}
@@ -29,8 +29,8 @@ if (isset($_REQUEST['uid'])) {
 }
 
 if (isset($_REQUEST['cid'])) {
-		$cid = mysqli_real_escape_string($conn,$_REQUEST['cid']);
-		if(mysqli_query($conn,"DELETE FROM orders WHERE pid='$cid' AND uid='$user'")){
+		$cid = $_REQUEST['cid'];
+		if($con->query("delete from orders WHERE pid=".$cid." and uid=".$user)){
 		header('location: mycart.php?uid='.$user.'');
 	}else{
 		header('location: index.php');
@@ -76,20 +76,20 @@ $del = $_POST['Delivery'];
 						
 						";
 						//if (@mail($uemail_db,"eBuyBD Product Order",$msg, "From:eBuyBD <no-reply@ebuybd.xyz>")) {
-						$result = mysqli_query($conn,"SELECT * FROM cart WHERE uid='$user'");
-						$t = mysqli_num_rows($result);
+						$result = $con->query("select * from cart WHERE uid=".$user);
+						$t = $result->rowCount();
 						if($t <= 0) {
 							throw new Exception('No product in cart. Add product first.');
 							
 						}
-						while ($get_p = mysqli_fetch_assoc($result)) {
+						while ($get_p = $result->fetch(PDO::FETCH_ASSOC)) {
 							$num = $get_p['quantity'];
 							$pid = $get_p['pid'];
 
-							mysqli_query($conn,"INSERT INTO orders (uid,pid,quantity,oplace,mobile,odate,delivery) VALUES ('$user','$pid',$num,'$_POST[address]','$_POST[mobile]','$d','$del')");
+							$con->query("insert into orders (uid,pid,quantity,oplace,mobile,odate,ddate,delivery) VALUES (".$user.",".$pid.",".$num.",'".$_POST['address']."','".$_POST['mobile']."','".$d."','".$d."','".$del."')");
 						}
 							
-						if(mysqli_query($conn,"DELETE FROM cart WHERE uid='$user'")){
+						if($con->query("delete from cart WHERE uid=".$user)){
 
 							//success message
 							
@@ -193,18 +193,18 @@ $del = $_POST['Delivery'];
 									<th>Remove</th>
 								</tr>
 								<tr>
-									<?php include ( "inc/connect.inc.php");
-									$query = "SELECT * FROM cart WHERE uid='$user' ORDER BY id DESC";
-									$run = mysqli_query($conn,$query);
+									<?php 
+									$query = "select * from cart WHERE uid=".$user;
+									$run = $con->query($query);
 									$total = 0;
-									while ($row=mysqli_fetch_assoc($run)) {
+									while ($row=$run->fetch(PDO::FETCH_ASSOC)) {
 										$pid = $row['pid'];
 										$quantity = $row['quantity'];
 										
 										//get product info
-										$query1 = "SELECT * FROM products WHERE id='$pid'";
-										$run1 = mysqli_query($conn,$query1);
-										$row1=mysqli_fetch_assoc($run1);
+										$query1 = "select * from products WHERE id=".$pid;
+										$run1 = $con->query($query1);
+										$row1=$run1->fetch(PDO::FETCH_ASSOC);
 										$pId = $row1['id'];
 										$pName = substr($row1['pName'], 0,50);
 										$price = $row1['price'];
@@ -231,7 +231,7 @@ $del = $_POST['Delivery'];
 								<tr style="font-weight: bold;" colspan="10" bgcolor="#3A5487">
 									<th>Total</th>
 									<th></th>
-									<th><?php echo $total ?> Php</th>
+									<th><?php echo $total ?> Tn</th>
 									<th></th>
 									<th></th>
 									<th></th>
@@ -255,8 +255,8 @@ $del = $_POST['Delivery'];
 
 
 							$user = $_SESSION['user_login'];
-		$result = mysqli_query($conn,"SELECT * FROM user WHERE id='$user'");
-			$get_user_email = mysqli_fetch_assoc($result);
+		$result = $con->query("select * from user WHERE id=".$user);
+			$get_user_email = $result->fetch(PDO::FETCH_ASSOC);
 				$uname_db = $get_user_email['firstName'];
 				$ulast_db=$get_user_email['lastName'];
 				$uemail_db = $get_user_email['email'];

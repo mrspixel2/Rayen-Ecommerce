@@ -8,7 +8,7 @@ if (!isset($_SESSION['user_login'])) {
 }
 else {
 	$user = $_SESSION['user_login'];
-	$result = $con->query("SELECT * FROM user WHERE id='$user'");
+	$result = $con->query("select * from user WHERE id=".$user);
 		$get_user_email = $result->fetch(PDO::FETCH_ASSOC);
 			$uname_db = $get_user_email['firstName'];
 			$uemail_db = $get_user_email['email'];
@@ -20,7 +20,7 @@ else {
 
 if (isset($_REQUEST['uid'])) {
 	
-	$user2 = $con->quote($_REQUEST['uid']);
+	$user2 = $_REQUEST['uid'];
 	if($user != $user2){
 		header('location: index.php');
 	}
@@ -44,7 +44,11 @@ $npass1 = $_POST['npass1'];
 				if( md5($opass) == $upass){
 					if($npass == $npass1){
 						$npass = md5($npass);
-						$con->query("UPDATE user SET password='$npass' WHERE id='$user'");
+						try{
+						$con->query("update user set password='".$npass."' WHERE id=".$user);
+						}catch (PDOException $e) {
+							echo $e->getMessage();
+						}
 						$success_message = '
 						<div class="signupform_text" style="font-size: 18px; text-align: center;">
 						<font face="bookman">
@@ -73,7 +77,7 @@ $npass1 = $_POST['npass1'];
 				}
 
 			if($uemail_db != $email) {
-				if($con->query("UPDATE user SET  email='$email' WHERE id='$user'")){
+				if($con->query("update user set  email='".$email."' WHERE id=".$user)){
 					//success message
 					$success_message = '
 					<div class="signupform_text" style="font-size: 18px; text-align: center;">

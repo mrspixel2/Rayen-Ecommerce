@@ -8,7 +8,7 @@ if (!isset($_SESSION['admin_login'])) {
 }
 else {
 	$user = $_SESSION['admin_login'];
-	$result = $con->query("SELECT * FROM admin WHERE id='$user'");
+	$result = $con->query("select * from admin WHERE id=".$user);
 		$get_user_email = $result->fetch(PDO::FETCH_ASSOC);
 			$uname_db = $get_user_email['firstName'];
 			$utype_db=$get_user_email['type'];
@@ -90,7 +90,7 @@ $search_value = "";
 				</tr>
 				<tr>
 					<?php include ( "../inc/connect.inc.php");
-					$query = "SELECT * FROM products ORDER BY id DESC";
+					$query = "select * from products ORDER BY id DESC";
 					$run = $con->query($query);
 					while ($row= $run->fetch(PDO::FETCH_ASSOC)) {
 						$id = $row['id'];

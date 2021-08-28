@@ -8,6 +8,7 @@ if (!isset($_SESSION['user_login'])) {
 }
 else {
 	$user = $_SESSION['user_login'];
+	echo "<script>alert('$user')</script>";
 	$result = $con->query("select * from user where id=".$user);
 		$get_user_email = $result->fetch(PDO::FETCH_ASSOC);
 			$uname_db = $get_user_email['firstName'];
@@ -51,7 +52,7 @@ $search_value = "";
 					 ?>
 					
 				</div>
-				<div class="uiloginbutton signinButton loginButton" style="">
+				<div class="uiloginbutton signinButton loginButton">
 					<?php 
 						if ($user!="") {
 							echo '<a style="text-decoration: none; color: #fff;" href="profile.php?uid='.$user.'">Hi '.$uname_db.'</a>';
@@ -113,10 +114,13 @@ $search_value = "";
 								</tr>
 								<tr>
 									<?php include ( "inc/connect.inc.php");
-									$query = "select * from orders where uid=:user";
+									$query = "select * from orders WHERE uid=".$user2;
+									try{
 									$run = $con->prepare($query);
-									$run->bindParam('user',$user, PDO::PARAM_INT);
 									$run->execute();
+									}catch (PDOException $e) {
+										echo $e->getMessage();
+									}
 									while ($row=$run->fetch(PDO::FETCH_ASSOC)) {
 										$pid = $row['pid'];
 										$quantity = $row['quantity'];
@@ -127,10 +131,13 @@ $search_value = "";
 										$dstatus = $row['dstatus'];
 										
 										//get product info
-										$query1 = "select * from products where id=:pid";
-										$run1 = $con->prepare($query1);
-										$run1->bindParam('pid',$pid, PDO::PARAM_INT);
-										$run1->execute();
+										$query1 = "select * from products WHERE id= ".$pid;
+										try{
+											$run1 = $con->prepare($query1);
+											$run1->execute();
+											}catch (PDOException $e) {
+												echo $e->getMessage();
+										}
 										$row1=$run1->fetch(PDO::FETCH_ASSOC);
 										$pId = $row1['id'];
 										$pName = substr($row1['pName'], 0,50);

@@ -1,4 +1,4 @@
-<?php include ( "inc/connect.inc.php" ); ?>
+<?php include ( "inc/conn.php" ); ?>
 <?php 
 
 ob_start();
@@ -8,7 +8,7 @@ if (!isset($_SESSION['user_login'])) {
 }
 else {
 	$user = $_SESSION['user_login'];
-	$result = mysqli_query($con, "SELECT * FROM user WHERE id='$user'");
+	$result = mysqli_query($conn, "SELECT * FROM user WHERE id='$user'");
 		$get_user_email = mysqli_fetch_assoc($result);
 			$uname_db = $get_user_email['firstName'];
 			$uemail_db = $get_user_email['email'];
@@ -19,7 +19,7 @@ else {
 
 if (isset($_REQUEST['uid'])) {
 	
-	$user2 = mysqli_real_escape_string($con, $_REQUEST['uid']);
+	$user2 = mysqli_real_escape_string($conn, $_REQUEST['uid']);
 	if($user != $user2){
 		header('location: index.php');
 	}
@@ -119,14 +119,14 @@ $search_value = "";
 								<tr>
 									<?php include ( "inc/connect.inc.php");
 									$query = "SELECT * FROM cart WHERE uid='$user' ORDER BY id DESC";
-									$run = mysqli_query($con, $query);
+									$run = mysqli_query($conn, $query);
 									while ($row=mysqli_fetch_assoc($run)) {
 										$pid = $row['pid'];
 										$quantity = $row['quantity'];
 										
 										//get product info
 										$query1 = "SELECT * FROM products WHERE id='$pid'";
-										$run1 = mysqli_query($con, $query1);
+										$run1 = mysqli_query($conn, $query1);
 										$row1=mysqli_fetch_assoc($run1);
 										$pId = $row1['id'];
 										$pName = substr($row1['pName'], 0,50);
